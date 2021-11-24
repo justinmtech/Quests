@@ -1,0 +1,6 @@
+name: Quests
+version: '${project.version}'
+main: com.justinmtech.quests.Quests
+api-version: 1.17
+authors: [ justinmtech ]
+website: https://justinmtech.com
