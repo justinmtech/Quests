@@ -1,28 +1,34 @@
 package com.justinmtech.quests.core;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class Quest {
+public class
+Quest {
     private Player player;
-    private List<Task> tasks;
+    private Listener task;
     private int progress;
     private int completion;
 
-    public Quest(Player player, int completion) {
-        this.tasks = new LinkedList<>();
-        this.player = player;
-        this.progress = 0;
-        this.completion = completion;
-    }
-
     public Quest(Player player, int progress, int completion) {
-        this.tasks = new LinkedList<>();
         this.player = player;
         this.progress = progress;
         this.completion = completion;
+    }
+
+    public Quest(Player player, Listener task) {
+        this.player = player;
+        this.task = task;
+    }
+
+    public void giveReward(String questName) {
+        player.sendMessage("You completed the " + questName + " quest!");
+        player.getInventory().addItem(new ItemStack(Material.DIAMOND));
     }
 
     public Player getPlayer() {
@@ -49,11 +55,15 @@ public class Quest {
         this.completion = completion;
     }
 
-    public List<Task> getTasks() {
-        return tasks;
+    public Listener getTask() {
+        return task;
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    public void setTask(Listener task) {
+        this.task = task;
+    }
+
+    public void incrementProgress() {
+        this.progress += 1;
     }
 }
