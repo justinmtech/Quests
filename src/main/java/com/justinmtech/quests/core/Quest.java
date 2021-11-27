@@ -26,7 +26,7 @@ Quest {
         this.task = task;
     }
 
-    public void giveReward(String questName) {
+    public void \giveReward(String questName) {
         player.sendMessage("You completed the " + questName + " quest!");
         player.getInventory().addItem(new ItemStack(Material.DIAMOND));
     }
