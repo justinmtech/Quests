@@ -33,6 +33,11 @@ public class MySQLDataHandler implements ManageData {
     }
 
     @Override
+    public List<Quest> getQuestsByPlayer(Player player) {
+        return null;
+    }
+
+    @Override
     public void updateQuest(Quest quest) {
 
     }

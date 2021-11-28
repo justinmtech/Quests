@@ -18,6 +18,8 @@ public interface ManageData {
 
     Quest getQuest(Player player, Listener listener);
 
+    List<Quest> getQuestsByPlayer(Player player);
+
     void updateQuest(Quest quest);
 
     void deleteQuest(Quest quest);

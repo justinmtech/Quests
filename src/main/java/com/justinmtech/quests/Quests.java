@@ -1,12 +1,13 @@
 package com.justinmtech.quests;
 
-import com.justinmtech.quests.core.Quest;
 import com.justinmtech.quests.listeners.BreakListener;
 import com.justinmtech.quests.listeners.KillMobListener;
 import com.justinmtech.quests.listeners.PlaceListener;
 import com.justinmtech.quests.listeners.WalkListener;
+import com.justinmtech.quests.core.Quest;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //TODO test in-game
@@ -18,6 +19,7 @@ public final class Quests extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        this.activeQuests = new ArrayList();
         // Plugin startup logic
 
         //load config
@@ -25,6 +27,7 @@ public final class Quests extends JavaPlugin {
         //determine data location (mysql or flatfile)
 
         //load data if exists or create new tables if none exist
+
 
         //
         System.out.println("Quests enabled!");
@@ -40,6 +43,10 @@ public final class Quests extends JavaPlugin {
         System.out.println("Quests disabled!");
 
         //save data
+    }
+
+    private void createDataFolder() {
+
     }
 
     public List<Quest> getActiveQuests() {
