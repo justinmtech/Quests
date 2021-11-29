@@ -1,24 +1,26 @@
 package com.justinmtech.quests;
 
+import com.justinmtech.quests.core.Data;
 import com.justinmtech.quests.listeners.*;
-import com.justinmtech.quests.core.Quest;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.io.Serializable;
 
 //TODO test in-game
 //TODO persist data through reboots
 //TODO find out what the configuration requirements are
 
-public final class Quests extends JavaPlugin {
-    private List<Quest> activeQuests;
+public final class Quests extends JavaPlugin implements Serializable {
+    private Data data;
+    //private List<Quest> activeQuests;
+
+    public Quests() {
+        this.data = new Data();
+    }
 
     @Override
     public void onEnable() {
-        this.activeQuests = new ArrayList();
+        //this.activeQuests = new ArrayList();
         // Plugin startup logic
 
         //load config
@@ -27,59 +29,48 @@ public final class Quests extends JavaPlugin {
 
         //load data if exists or create new tables if none exist
 
+        data.createDataDirectory();
 
-        //
+        makeDefaultConfig();
+
         System.out.println("Quests enabled!");
         this.getServer().getPluginManager().registerEvents(new BreakListener(this), this);
         this.getServer().getPluginManager().registerEvents(new KillMobListener(this), this);
         this.getServer().getPluginManager().registerEvents(new PlaceListener(this), this);
         this.getServer().getPluginManager().registerEvents(new MoveListener(this), this);
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(this), this);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
         System.out.println("Quests disabled!");
+        data.getActiveQuests().clear();
 
         //save data
     }
 
-    private void createDataFolder() {
-
-    }
-
-    public List<Quest> getActiveQuests() {
-        return activeQuests;
-    }
-
-    public List<Quest> getActiveQuestsByPlayer(Player player) {
-        List<Quest> quests = null;
-        try {
-           quests = activeQuests.stream().filter(q -> q.getPlayer().equals(player)).collect(Collectors.toList());
+    private void makeDefaultConfig() {
+/*        try {
+            this.getDataFolder().createNewFile();
+            this.getDataFolder().mkdir();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        return quests;
+        }*/
+        this.getConfig().set("mysqlEnabled", false);
+        this.saveConfig();
     }
 
-    public void removeQuestByPlayerAndType(Player player, String type) {
-        Quest quest = getActiveQuestByPlayerAndType(player, type);
-        activeQuests.removeIf(q -> q.equals(quest));
-        System.out.println(quest.getType() + " quest removed from player");
-        System.out.println(activeQuests);
+    public Data getData() {
+        return data;
     }
 
-    public Quest getActiveQuestByPlayerAndType(Player player, String type) {
-        Quest quest = null;
-        return activeQuests.stream().filter(q -> q.getPlayer().equals(player) && q.getType().equals(type)).findAny().orElseThrow(null);
+    public void setData(Data data) {
+        this.data = data;
     }
 
-    public void setActiveQuests(List<Quest> activeQuests) {
-        this.activeQuests = activeQuests;
-    }
+    private void createDataFolder() {
 
-    public boolean hasActiveQuestOfType(Player player, String type) {
-        return activeQuests.stream().anyMatch(q -> q.getPlayer().equals(player) && q.getType().equals(type));
     }
 }

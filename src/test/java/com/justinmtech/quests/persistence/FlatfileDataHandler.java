@@ -1,5 +1,6 @@
 package com.justinmtech.quests.persistence;
 
+import com.justinmtech.quests.Quests;
 import com.justinmtech.quests.core.Quest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,7 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlatfileDataHandler implements ManageData {
+    private Quests plugin;
 
+    public FlatfileDataHandler(Quests plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public void initialSetup() {

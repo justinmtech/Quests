@@ -2,18 +2,24 @@ package com.justinmtech.quests.core;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-public class Quest {
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Quest implements ConfigurationSerializable {
     private Player player;
     private Listener task;
     private String type;
     private int progress;
     private int completion;
+    private static transient final long serialVersionUID = -1681012206529286330L;
 
-    public Quest(Player player, int progress, int completion) {
+public Quest(Player player, int progress, int completion) {
         this.player = player;
         this.progress = progress;
         this.completion = completion;
@@ -82,5 +88,16 @@ public class Quest {
     @Override
     public String toString() {
         return type;
+    }
+
+    @Override
+    public Map<String, Object> serialize() {
+        HashMap<String, Object>  mapSerializer = new HashMap<>();
+
+        mapSerializer.put("type", this.type);
+        mapSerializer.put("progress", this.progress);
+        mapSerializer.put("completion", this.completion);
+
+        return mapSerializer;
     }
 }

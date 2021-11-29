@@ -10,7 +10,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-public class MoveListener implements Listener {
+import java.io.Serializable;
+
+public class MoveListener implements Listener, Serializable {
     private Quests plugin;
     private final static String TYPE = "DistanceTravelled";
 
@@ -22,15 +24,15 @@ public class MoveListener implements Listener {
     public void onWalk(PlayerMoveEvent e) {
         try {
         Player player = e.getPlayer();
-            if (plugin.hasActiveQuestOfType(player, TYPE)) {
-                Quest quest = plugin.getActiveQuestByPlayerAndType(player, TYPE);
+            if (plugin.getData().hasActiveQuestOfType(player, TYPE)) {
+                Quest quest = plugin.getData().getActiveQuestByPlayerAndType(player, TYPE);
                 int distanceWalked = player.getStatistic(Statistic.WALK_ONE_CM) / 100;
                 int distanceSprinted = player.getStatistic(Statistic.SPRINT_ONE_CM) / 100;
                 int distanceTravelled = distanceWalked + distanceSprinted;
                 System.out.println(distanceTravelled);
                     if (distanceTravelled >= quest.getCompletion()) {
                         quest.giveReward("Distance Travelled");
-                        plugin.removeQuestByPlayerAndType(player, TYPE);
+                        plugin.getData().removeQuestByPlayerAndType(player, TYPE);
                     }
             }
         } catch (Exception ex) {

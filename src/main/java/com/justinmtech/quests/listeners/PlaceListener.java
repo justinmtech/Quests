@@ -8,7 +8,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-public class PlaceListener implements Listener {
+import java.io.Serializable;
+
+public class PlaceListener implements Listener, Serializable {
     private Quests plugin;
     private final static String TYPE = "BlockPlace";
 
@@ -19,9 +21,9 @@ public class PlaceListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
         Player player = e.getPlayer();
-        if (plugin.hasActiveQuestOfType(player, TYPE)) {
+        if (plugin.getData().hasActiveQuestOfType(player, TYPE)) {
             try {
-                Quest quest = plugin.getActiveQuestByPlayerAndType(player, TYPE);
+                Quest quest = plugin.getData().getActiveQuestByPlayerAndType(player, TYPE);
                 quest.incrementProgress();
 
                 if (quest.getProgress() <= quest.getCompletion()) {
@@ -30,7 +32,7 @@ public class PlaceListener implements Listener {
 
                 if (quest.getProgress() == quest.getCompletion()) {
                     quest.giveReward("Blocks Placed");
-                    plugin.removeQuestByPlayerAndType(player, TYPE);
+                    plugin.getData().removeQuestByPlayerAndType(player, TYPE);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

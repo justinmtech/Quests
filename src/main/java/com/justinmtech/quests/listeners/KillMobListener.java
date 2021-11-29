@@ -10,9 +10,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class KillMobListener implements Listener {
+public class KillMobListener implements Listener, Serializable {
     private Quests plugin;
     private final static String TYPE = "KillMob";
 
@@ -30,9 +31,9 @@ public class KillMobListener implements Listener {
             ex.printStackTrace();
         }
 
-        if (plugin.hasActiveQuestOfType(player, TYPE)) {
+        if (plugin.getData().hasActiveQuestOfType(player, TYPE)) {
             try {
-                Quest quest = plugin.getActiveQuestByPlayerAndType(player, TYPE);
+                Quest quest = plugin.getData().getActiveQuestByPlayerAndType(player, TYPE);
                 quest.incrementProgress();
 
                 if (quest.getProgress() <= quest.getCompletion()) {
@@ -41,7 +42,7 @@ public class KillMobListener implements Listener {
 
                 if (quest.getProgress() == quest.getCompletion()) {
                     quest.giveReward("Mobs Killed");
-                    plugin.removeQuestByPlayerAndType(player, TYPE);
+                    plugin.getData().removeQuestByPlayerAndType(player, TYPE);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
