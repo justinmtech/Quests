@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.io.Serializable;
 
-public class MoveListener implements Listener, Serializable {
+public class MoveListener implements Listener {
     private Quests plugin;
     private final static String TYPE = "DistanceTravelled";
 

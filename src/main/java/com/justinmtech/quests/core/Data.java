@@ -1,25 +1,23 @@
 package com.justinmtech.quests.core;
 
-import com.justinmtech.quests.Quests;
-import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
+import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-public class Data implements ConfigurationSerializable {
+public class Data {
     private List<Quest> activeQuests;
-    //private static transient final long serialVersionUID = -1681012206529286330L;
+    FileConfiguration config;
 
     public Data() {
         this.activeQuests = new ArrayList<>();
@@ -85,17 +83,60 @@ public class Data implements ConfigurationSerializable {
         }
 
         try {
-            //BukkitObjectOutputStream out =
-            //        new BukkitObjectOutputStream(new GZIPOutputStream(new FileOutputStream(filePath)));
-            //out.writeObject(this);
-            //out.close();
-            Configuration config = YamlConfiguration.loadConfiguration(file);
-            config.set("quests", getActiveQuestsByPlayer(player));
+            List<Quest> quests = getActiveQuestsByPlayer(player);
+
+            config = YamlConfiguration.loadConfiguration(file);
+            config.set("quests", quests);
+            config.save(file);
             return true;
+
+
+/*            BukkitObjectOutputStream out =
+                    new BukkitObjectOutputStream(new GZIPOutputStream(new FileOutputStream(filePath)));
+            out.writeObject(quests);
+            out.close();
+            return true;*/
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public void saveDataForListOfPlayers(List<Player> players) {
+        int listSize = players.size();
+        for (int i = 0; i < listSize; i++) {
+            saveData(players.get(i));
+            System.out.println("Data saved for player " + players.get(i).getName());
+        }
+    }
+
+    public boolean loadData(Player player) {
+        String filePath = "plugins//Quests//data//" + player.getUniqueId() + ".yml";
+        File file = new File(filePath);
+        try {
+            if (file.exists()) {
+
+                config = YamlConfiguration.loadConfiguration(file);
+
+                List<Quest> quests = (List<Quest>) config.get("quests");
+
+/*                BukkitObjectInputStream in =
+                        new BukkitObjectInputStream(new GZIPInputStream(new FileInputStream(filePath)));
+                List<Quest> quests = (List<Quest>) in.readObject();
+                */
+                for (int i = 0; i < quests.size(); i++) {
+                    quests.get(i).setPlayer(player);
+                }
+                System.out.println(quests);
+                activeQuests.addAll(quests);
+                System.out.println(activeQuests.size());
+                System.out.println(player.getName() + " data loaded");
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void removeAllQuestsOfPlayer(Player player) {
@@ -103,12 +144,12 @@ public class Data implements ConfigurationSerializable {
         System.out.println(activeQuests.size());
     }
 
-    @Override
+/*    @Override
     public Map<String, Object> serialize() {
-        HashMap<String, Object> mapSerializer = new HashMap<>();
+        HashMap<String, Object> mapSerializable = new HashMap<>();
 
-        //mapSerializer.put("quests", getActiveQuestsByPlayer(this.player));
+        mapSerializable.put("quests", activeQuests);
 
-        return mapSerializer;
-    }
+        return mapSerializable;
+    }*/
 }

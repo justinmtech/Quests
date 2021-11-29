@@ -1,10 +1,16 @@
 package com.justinmtech.quests;
 
 import com.justinmtech.quests.core.Data;
+import com.justinmtech.quests.core.Quest;
 import com.justinmtech.quests.listeners.*;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.Serializable;
+import java.util.List;
 
 //TODO test in-game
 //TODO persist data through reboots
@@ -40,15 +46,16 @@ public final class Quests extends JavaPlugin implements Serializable {
         this.getServer().getPluginManager().registerEvents(new MoveListener(this), this);
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
         this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(this), this);
+
+        ConfigurationSerialization.registerClass(Quest.class);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        System.out.println("Quests disabled!");
+        data.saveDataForListOfPlayers((List<Player>) Bukkit.getOnlinePlayers());
         data.getActiveQuests().clear();
-
-        //save data
+        System.out.println("Quest data saved and plugin disabled!");
     }
 
     private void makeDefaultConfig() {

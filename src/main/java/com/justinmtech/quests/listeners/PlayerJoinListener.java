@@ -7,6 +7,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.io.File;
+
 public class PlayerJoinListener implements Listener {
     private Quests plugin;
 
@@ -17,15 +19,20 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
+        File file = new File("plugins//Quests//data//" + player.getUniqueId() + ".yml");
+        if (!file.exists()) {
             try {
-                plugin.getData().getActiveQuests().add(new Quest(player, new MoveListener(plugin), "DistanceTravelled", 10));
-                plugin.getData().getActiveQuests().add(new Quest(player, new KillMobListener(plugin), "KillMob", 10));
-                plugin.getData().getActiveQuests().add(new Quest(player, new PlaceListener(plugin), "BlockPlace", 10));
-                plugin.getData().getActiveQuests().add(new Quest(player, new BreakListener(plugin), "BlockBreak", 10));
+                plugin.getData().getActiveQuests().add(new Quest(player, "DistanceTravelled", 10));
+                plugin.getData().getActiveQuests().add(new Quest(player, "KillMob", 10));
+                plugin.getData().getActiveQuests().add(new Quest(player, "BlockPlace", 10));
+                plugin.getData().getActiveQuests().add(new Quest(player, "BlockBreak", 10));
                 System.out.println(plugin.getData().getActiveQuests().size());
             } catch (Exception ex) {
                 ex.printStackTrace();
+            }
+            plugin.getData().saveData(player);
+        } else {
+            plugin.getData().loadData(player);
         }
-        plugin.getData().saveData(player);
     }
 }

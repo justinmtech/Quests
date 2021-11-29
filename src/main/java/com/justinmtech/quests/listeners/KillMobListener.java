@@ -13,7 +13,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import java.io.Serializable;
 import java.util.List;
 
-public class KillMobListener implements Listener, Serializable {
+public class KillMobListener implements Listener {
     private Quests plugin;
     private final static String TYPE = "KillMob";
 

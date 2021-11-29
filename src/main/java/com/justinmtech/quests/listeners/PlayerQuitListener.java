@@ -16,6 +16,7 @@ public class PlayerQuitListener implements Listener {
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e) {
         Player player = e.getPlayer();
+        plugin.getData().saveData(player);
         this.plugin.getData().removeAllQuestsOfPlayer(player);
     }
 }

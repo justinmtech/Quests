@@ -28,7 +28,7 @@ public class MySQLDataHandler implements ManageData {
     }
 
     @Override
-    public Quest getQuest(Player player, Listener listener) {
+    public Quest getQuest(Player player, String type) {
         return null;
     }
 

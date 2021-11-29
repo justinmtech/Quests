@@ -45,9 +45,9 @@ public class FlatfileDataHandler implements ManageData {
                 file.createNewFile();
                 FileConfiguration fileConfig = YamlConfiguration.loadConfiguration(file);
                 fileConfig.set("player", quest.getPlayer().getName());
-                fileConfig.set("quests." + quest.getTask().toString(), quest.getTask());
-                fileConfig.set("quests." + quest.getTask().toString() + ".progress", quest.getProgress());
-                fileConfig.set("quests." + quest.getTask().toString() + ".completion", quest.getCompletion());
+                fileConfig.set("quests." + quest.getType(), quest.getType());
+                fileConfig.set("quests." + quest.getType() + ".progress", quest.getProgress());
+                fileConfig.set("quests." + quest.getType() + ".completion", quest.getCompletion());
                 fileConfig.save(file);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -56,16 +56,16 @@ public class FlatfileDataHandler implements ManageData {
     }
 
     @Override
-    public Quest getQuest(Player player, Listener listener) {
+    public Quest getQuest(Player player, String type) {
         Quest quest = null;
         try {
             File file = new File("/data" + player.getPlayer().getUniqueId() + ".yml");
             if (file.exists()) {
                 FileConfiguration fileConfig = YamlConfiguration.loadConfiguration(file);
                 quest.setPlayer(player);
-                quest.setTask((Listener)fileConfig.get("quests." + listener.toString()));
-                quest.setProgress((int)fileConfig.get("quests." + listener.toString() + ".progress"));
-                quest.setCompletion((int)fileConfig.get("quests." + listener.toString() + ".completion"));
+                quest.setType((String)fileConfig.get("quests." + type));
+                quest.setProgress((int)fileConfig.get("quests." + type + ".progress"));
+                quest.setCompletion((int)fileConfig.get("quests." + type + ".completion"));
                 return quest;
             }
         } catch (Exception e) {
@@ -87,7 +87,7 @@ public class FlatfileDataHandler implements ManageData {
                 for (int i = 0; i < listSize; i++) {
                 Quest quest = new Quest();
                 quest.setPlayer(player);
-                quest.setTask((Listener)fileConfig.get("quests." + list.get(i) + ".task"));
+                quest.setType((String)fileConfig.get("quests." + list.get(i) + ".task"));
                 quest.setProgress((int)fileConfig.get("quests." + list.get(i) + "progress"));
                 quest.setCompletion((int)fileConfig.get("completion"));
                 quests.add(quest);

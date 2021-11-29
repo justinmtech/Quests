@@ -16,7 +16,7 @@ public interface ManageData {
 
     void createQuest(Quest quest);
 
-    Quest getQuest(Player player, Listener listener);
+    Quest getQuest(Player player, String type);
 
     List<Quest> getQuestsByPlayer(Player player);
 

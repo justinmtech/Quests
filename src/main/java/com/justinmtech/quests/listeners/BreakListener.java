@@ -10,7 +10,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 import java.io.Serializable;
 
-public class BreakListener implements Listener, Serializable {
+public class BreakListener implements Listener {
     private Quests plugin;
     private final static String TYPE = "BlockBreak";
 
