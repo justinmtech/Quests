@@ -5,16 +5,15 @@ import com.justinmtech.quests.core.Quest;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlatfileDataHandler implements ManageData {
-    private Quests plugin;
+public class FlatfileDataTestHandlerTest implements ManageDataTest {
+    private final Quests plugin;
 
-    public FlatfileDataHandler(Quests plugin) {
+    public FlatfileDataTestHandlerTest(Quests plugin) {
         this.plugin = plugin;
     }
 

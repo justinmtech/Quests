@@ -2,11 +2,10 @@ package com.justinmtech.quests.persistence;
 
 import com.justinmtech.quests.core.Quest;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 import java.util.List;
 
-public interface ManageData {
+public interface ManageDataTest {
 
     void initialSetup();
 

@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerQuitListener implements Listener {
-    private Quests plugin;
+    private final Quests plugin;
 
     public PlayerQuitListener(Quests plugin) {
         this.plugin = plugin;
@@ -17,6 +17,6 @@ public class PlayerQuitListener implements Listener {
     public void onPlayerLeave(PlayerQuitEvent e) {
         Player player = e.getPlayer();
         plugin.getData().saveData(player);
-        this.plugin.getData().removeAllQuestsOfPlayer(player);
+        plugin.getData().removeAllQuests(player);
     }
 }

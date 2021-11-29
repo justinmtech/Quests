@@ -8,10 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import java.io.Serializable;
-
 public class BreakListener implements Listener {
-    private Quests plugin;
+    private final Quests plugin;
     private final static String TYPE = "BlockBreak";
 
     public BreakListener(Quests plugin) {
@@ -21,9 +19,9 @@ public class BreakListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
             Player player = e.getPlayer();
-            if (plugin.getData().hasActiveQuestOfType(player, TYPE)) {
+            if (plugin.getData().hasQuest(player, TYPE)) {
                 try {
-                    Quest quest = plugin.getData().getActiveQuestByPlayerAndType(player, TYPE);
+                    Quest quest = plugin.getData().getQuest(player, TYPE);
                     quest.incrementProgress();
 
                     if (quest.getProgress() <= quest.getCompletion()) {
@@ -32,7 +30,7 @@ public class BreakListener implements Listener {
 
                     if (quest.getProgress() == quest.getCompletion()) {
                         quest.giveReward("Blocks Broken");
-                        plugin.getData().removeQuestByPlayerAndType(player, TYPE);
+                        plugin.getData().removeQuest(player, TYPE);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

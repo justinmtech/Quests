@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.io.File;
 
 public class PlayerJoinListener implements Listener {
-    private Quests plugin;
+    private final Quests plugin;
 
     public PlayerJoinListener(Quests plugin) {
         this.plugin = plugin;
@@ -22,11 +22,11 @@ public class PlayerJoinListener implements Listener {
         File file = new File("plugins//Quests//data//" + player.getUniqueId() + ".yml");
         if (!file.exists()) {
             try {
-                plugin.getData().getActiveQuests().add(new Quest(player, "DistanceTravelled", 10));
-                plugin.getData().getActiveQuests().add(new Quest(player, "KillMob", 10));
-                plugin.getData().getActiveQuests().add(new Quest(player, "BlockPlace", 10));
-                plugin.getData().getActiveQuests().add(new Quest(player, "BlockBreak", 10));
-                System.out.println(plugin.getData().getActiveQuests().size());
+                plugin.getData().getAllQuests().add(new Quest(player, "DistanceTravelled", 10));
+                plugin.getData().getAllQuests().add(new Quest(player, "KillMob", 10));
+                plugin.getData().getAllQuests().add(new Quest(player, "BlockPlace", 10));
+                plugin.getData().getAllQuests().add(new Quest(player, "BlockBreak", 10));
+                System.out.println(plugin.getData().getAllQuests().size());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
