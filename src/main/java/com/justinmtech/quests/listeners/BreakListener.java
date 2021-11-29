@@ -10,6 +10,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 public class BreakListener implements Listener {
     private Quests plugin;
+    private final static String TYPE = "BlockBreak";
 
     public BreakListener(Quests plugin) {
     this.plugin = plugin;
@@ -17,12 +18,23 @@ public class BreakListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-        Player player = e.getPlayer();
-        Quest quest = plugin.getActiveQuests().stream().filter(q -> q.getPlayer().equals(player)).findAny().orElseThrow(null);
-        plugin.getActiveQuests().stream().filter(q -> q.getPlayer().equals(player) && q.getTask().equals(this)).findAny().orElseThrow(null).incrementProgress();
-        player.sendMessage(ChatColor.YELLOW + "You have mined" + quest.getProgress() + "/" + quest.getCompletion() + " blocks!");
-        if (quest.getProgress() == quest.getCompletion()) {
-            quest.giveReward("Blocks Broken");
-        }
+            Player player = e.getPlayer();
+            if (plugin.hasActiveQuestOfType(player, TYPE)) {
+                try {
+                    Quest quest = plugin.getActiveQuestByPlayerAndType(player, TYPE);
+                    quest.incrementProgress();
+
+                    if (quest.getProgress() <= quest.getCompletion()) {
+                    player.sendMessage(ChatColor.GOLD + "You have mined " + quest.getProgress() + "/" + quest.getCompletion() + " blocks!");
+                    }
+
+                    if (quest.getProgress() == quest.getCompletion()) {
+                        quest.giveReward("Blocks Broken");
+                        plugin.removeQuestByPlayerAndType(player, TYPE);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
     }
 }

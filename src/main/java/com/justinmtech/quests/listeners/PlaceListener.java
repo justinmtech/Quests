@@ -10,6 +10,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 public class PlaceListener implements Listener {
     private Quests plugin;
+    private final static String TYPE = "BlockPlace";
 
     public PlaceListener(Quests plugin) {
         this.plugin = plugin;
@@ -18,17 +19,22 @@ public class PlaceListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
         Player player = e.getPlayer();
-        Quest quest = plugin.getActiveQuests().stream()
-                .filter(q -> q.getPlayer().equals(player))
-                .findAny().orElseThrow(null);
-        plugin.getActiveQuests().stream()
-                .filter(q -> q.getPlayer().equals(player) && q.getTask().equals(this))
-                .findAny().orElseThrow(null).incrementProgress();
-        player.sendMessage(
-                ChatColor.YELLOW + "You have placed"
-                        + quest.getProgress() + "/" + quest.getCompletion() + " blocks!");
-        if (quest.getProgress() == quest.getCompletion()) {
-            quest.giveReward("Blocks Placed");
+        if (plugin.hasActiveQuestOfType(player, TYPE)) {
+            try {
+                Quest quest = plugin.getActiveQuestByPlayerAndType(player, TYPE);
+                quest.incrementProgress();
+
+                if (quest.getProgress() <= quest.getCompletion()) {
+                    player.sendMessage(ChatColor.GOLD + "You have placed " + quest.getProgress() + "/" + quest.getCompletion() + " blocks!");
+                }
+
+                if (quest.getProgress() == quest.getCompletion()) {
+                    quest.giveReward("Blocks Placed");
+                    plugin.removeQuestByPlayerAndType(player, TYPE);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }

@@ -17,9 +17,9 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        plugin.getActiveQuests().add(new Quest(player, new WalkListener(plugin)));
-        plugin.getActiveQuests().add(new Quest(player, new KillMobListener(plugin)));
-        plugin.getActiveQuests().add(new Quest(player, new PlaceListener(plugin)));
-        plugin.getActiveQuests().add(new Quest(player, new BreakListener(plugin)));
+        plugin.getActiveQuests().add(new Quest(player, new MoveListener(plugin), "DistanceTravelled", 10));
+        plugin.getActiveQuests().add(new Quest(player, new KillMobListener(plugin), "KillMob", 10));
+        plugin.getActiveQuests().add(new Quest(player, new PlaceListener(plugin), "BlockPlace", 10));
+        plugin.getActiveQuests().add(new Quest(player, new BreakListener(plugin), "BlockBreak", 10));
     }
 }
