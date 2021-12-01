@@ -12,9 +12,11 @@ import org.bukkit.event.entity.EntityDeathEvent;
 public class KillMobListener implements Listener {
     private final Quests plugin;
     private final static String TYPE = "KillMob";
+    private String rewardCommand;
 
     public KillMobListener(Quests plugin) {
         this.plugin = plugin;
+        rewardCommand = plugin.getConfig().getString("rewardCommands.KillMob");
     }
 
     @EventHandler
@@ -37,7 +39,7 @@ public class KillMobListener implements Listener {
                 }
 
                 if (quest.getProgress() == quest.getCompletion()) {
-                    quest.giveReward("Mobs Killed");
+                    quest.giveReward(player, rewardCommand);
                     plugin.getData().removeQuest(player, TYPE);
                 }
             } catch (Exception ex) {

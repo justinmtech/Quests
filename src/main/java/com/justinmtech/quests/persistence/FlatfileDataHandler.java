@@ -6,6 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,8 +21,7 @@ public class FlatfileDataHandler implements ManageData {
 
     @Override
     public void removeQuest(Player player, String type) {
-        Quest quest = getQuest(player, type);
-        quests.removeIf(q -> q.equals(quest));
+        quests.remove(getQuest(player, type));
     }
 
     @Override
@@ -59,14 +59,11 @@ public class FlatfileDataHandler implements ManageData {
         File file = new File(filePath);
         try {
             if (file.exists()) {
-
                 config = YamlConfiguration.loadConfiguration(file);
-
-                List<Quest> quests = (List<Quest>) config.get("quests");
-
-                for (int i = 0; i < quests.size(); i++) {
-                    quests.get(i).setPlayer(player);
-                }
+                List<Quest> quests = (List<Quest>) config.getList("quests");
+                    for (int i = 0; i < quests.size(); i++) {
+                        quests.get(i).setPlayer(player);
+                    }
                 this.quests.addAll(quests);
                 return true;
             }
@@ -99,9 +96,15 @@ public class FlatfileDataHandler implements ManageData {
 
             List<Quest> quests = getQuests(player);
 
+            if (quests.size() == 0) {
+                file.delete();
+                return true;
+            }
+
             config = YamlConfiguration.loadConfiguration(file);
             config.set("quests", quests);
             config.save(file);
+
             return true;
 
         } catch (Exception e) {
@@ -126,7 +129,7 @@ public class FlatfileDataHandler implements ManageData {
 
     @Override
     public void removeAllQuests() {
-        quests.clear();
+        quests = null;
     }
 
     @Override

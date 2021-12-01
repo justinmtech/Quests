@@ -11,9 +11,11 @@ import org.bukkit.event.block.BlockPlaceEvent;
 public class PlaceListener implements Listener {
     private final Quests plugin;
     private final static String TYPE = "BlockPlace";
+    private String rewardCommand;
 
     public PlaceListener(Quests plugin) {
         this.plugin = plugin;
+        rewardCommand = plugin.getConfig().getString("rewardCommands.BlockPlace");
     }
 
     @EventHandler
@@ -29,7 +31,7 @@ public class PlaceListener implements Listener {
                 }
 
                 if (quest.getProgress() == quest.getCompletion()) {
-                    quest.giveReward("Blocks Placed");
+                    quest.giveReward(player, rewardCommand);
                     plugin.getData().removeQuest(player, TYPE);
                 }
             } catch (Exception ex) {

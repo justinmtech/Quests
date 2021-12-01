@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 public interface ManageData {
-
     boolean initialSetup();
 
     List<Quest> getAllQuests();

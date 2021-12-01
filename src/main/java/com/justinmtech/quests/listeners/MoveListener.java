@@ -11,9 +11,11 @@ import org.bukkit.event.player.PlayerMoveEvent;
 public class MoveListener implements Listener {
     private final Quests plugin;
     private final static String TYPE = "DistanceTravelled";
+    private String rewardCommand;
 
     public MoveListener(Quests plugin) {
         this.plugin = plugin;
+        rewardCommand = plugin.getConfig().getString("rewardCommands.DistanceTravelled");
     }
 
     @EventHandler
@@ -25,11 +27,15 @@ public class MoveListener implements Listener {
                 int distanceWalked = player.getStatistic(Statistic.WALK_ONE_CM) / 100;
                 int distanceSprinted = player.getStatistic(Statistic.SPRINT_ONE_CM) / 100;
                 int distanceTravelled = distanceWalked + distanceSprinted;
-                System.out.println(distanceTravelled);
-                    if (distanceTravelled >= quest.getCompletion()) {
-                        quest.giveReward("Distance Travelled");
-                        plugin.getData().removeQuest(player, TYPE);
-                    }
+
+                if (distanceTravelled < quest.getCompletion()) {
+                    quest.setProgress(distanceTravelled);
+                }
+
+                if (distanceTravelled >= quest.getCompletion()) {
+                    plugin.getData().removeQuest(player, TYPE);
+                    quest.giveReward(player, rewardCommand);
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();

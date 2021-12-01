@@ -11,30 +11,32 @@ import org.bukkit.event.block.BlockBreakEvent;
 public class BreakListener implements Listener {
     private final Quests plugin;
     private final static String TYPE = "BlockBreak";
+    private String rewardCommand;
 
     public BreakListener(Quests plugin) {
     this.plugin = plugin;
+    rewardCommand = plugin.getConfig().getString("rewardCommands.BlockBreak");
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-            Player player = e.getPlayer();
-            if (plugin.getData().hasQuest(player, TYPE)) {
-                try {
-                    Quest quest = plugin.getData().getQuest(player, TYPE);
-                    quest.incrementProgress();
+        Player player = e.getPlayer();
+        if (plugin.getData().hasQuest(player, TYPE)) {
+            try {
+                Quest quest = plugin.getData().getQuest(player, TYPE);
+                quest.incrementProgress();
 
-                    if (quest.getProgress() <= quest.getCompletion()) {
+                if (quest.getProgress() <= quest.getCompletion()) {
                     player.sendMessage(ChatColor.GOLD + "You have mined " + quest.getProgress() + "/" + quest.getCompletion() + " blocks!");
-                    }
-
-                    if (quest.getProgress() == quest.getCompletion()) {
-                        quest.giveReward("Blocks Broken");
-                        plugin.getData().removeQuest(player, TYPE);
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
                 }
+
+                if (quest.getProgress() == quest.getCompletion()) {
+                    quest.giveReward(player, rewardCommand);
+                    plugin.getData().removeQuest(player, TYPE);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
+        }
     }
 }

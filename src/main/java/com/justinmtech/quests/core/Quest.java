@@ -1,10 +1,10 @@
 package com.justinmtech.quests.core;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,7 +15,6 @@ public class Quest implements ConfigurationSerializable {
     private String type;
     private int progress;
     private int completion;
-    //private static transient final long serialVersionUID = -1681012206529286330L;
 
     public Quest(Player player, int progress, int completion) {
         this.player = player;
@@ -31,6 +30,14 @@ public class Quest implements ConfigurationSerializable {
         this.completion = completion;
     }
 
+    public Quest(Player player, String type, int progress, int completion) {
+        this.player = player;
+        this.uuid = player.getUniqueId();
+        this.type = type;
+        this.progress = progress;
+        this.completion = completion;
+    }
+
     public Quest() {
     }
 
@@ -41,10 +48,11 @@ public class Quest implements ConfigurationSerializable {
         this.completion = (int) serializedQuest.get("completion");
     }
 
-    public void giveReward(String questName) {
-        player.sendMessage(ChatColor.AQUA + "You completed the " + questName
-                + " quest and received " + ChatColor.GREEN + "1 Diamond!");
-        player.getInventory().addItem(new ItemStack(Material.DIAMOND));
+    public void giveReward(Player player, String command) {
+        ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+        command = command.replace("<player>", player.getName());
+        player.sendMessage(ChatColor.AQUA + "You completed a quest!");
+        Bukkit.dispatchCommand(console, command);
     }
 
     public Player getPlayer() {
