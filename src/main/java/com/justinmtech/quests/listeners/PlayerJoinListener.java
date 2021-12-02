@@ -19,24 +19,16 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         boolean mysqlEnabled = plugin.getConfig().getBoolean("mysql.enabled");
-        plugin.getData().getQuests(e.getPlayer());
         Player player = e.getPlayer();
         File file = new File("plugins//Quests//data//" + player.getUniqueId() + ".yml");
-        String blockBreakCmd = plugin.getConfig().getString("rewardCommands.BlockBreak");
-        String blockPlaceCmd = plugin.getConfig().getString("rewardCommands.BlockPlace");
-        String killMobCmd = plugin.getConfig().getString("rewardCommands.KillMob");
-        String distanceTravelledCmd = plugin.getConfig().getString("rewardCommands.DistanceTravelled");
 
         if ((!plugin.getData().loadData(player) && mysqlEnabled) || (!file.exists() && !mysqlEnabled)) {
-
             plugin.getData().getAllQuests().add(new Quest(player, "BlockBreak", 10));
             plugin.getData().getAllQuests().add(new Quest(player, "BlockPlace", 10));
             plugin.getData().getAllQuests().add(new Quest(player, "KillMob", 2));
-            plugin.getData().getAllQuests().add(new Quest(player, "DistanceTravelled", 1000));
-            plugin.getData().saveData(player);
+            plugin.getData().getAllQuests().add(new Quest(player, "DistanceTravelled", 100));
 
-        } /*else {
-            plugin.getData().loadData(player);
-        }*/
+            plugin.getData().saveData(player);
+        }
     }
 }

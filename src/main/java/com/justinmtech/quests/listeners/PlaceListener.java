@@ -11,7 +11,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 public class PlaceListener implements Listener {
     private final Quests plugin;
     private final static String TYPE = "BlockPlace";
-    private String rewardCommand;
+    private final String rewardCommand;
 
     public PlaceListener(Quests plugin) {
         this.plugin = plugin;

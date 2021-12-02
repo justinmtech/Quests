@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 public class MoveListener implements Listener {
     private final Quests plugin;
     private final static String TYPE = "DistanceTravelled";
-    private String rewardCommand;
+    private final String rewardCommand;
 
     public MoveListener(Quests plugin) {
         this.plugin = plugin;

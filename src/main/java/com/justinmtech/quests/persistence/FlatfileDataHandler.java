@@ -6,13 +6,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FlatfileDataHandler implements ManageData {
-    private List<Quest> quests;
+    private final List<Quest> quests;
     FileConfiguration config;
 
     public FlatfileDataHandler() {
@@ -31,16 +30,17 @@ public class FlatfileDataHandler implements ManageData {
 
     @Override
     public boolean initialSetup() {
+        boolean setup = false;
         try {
             File directory = new File("plugins//Quests//data");
             if (!directory.exists()) {
-                directory.mkdir();
+                setup = directory.mkdir();
             }
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            setup = false;
         }
+        return setup;
     }
 
     @Override
@@ -53,6 +53,7 @@ public class FlatfileDataHandler implements ManageData {
         return quests.stream().filter(q -> q.getPlayer().equals(player) && q.getType().equals(type)).findAny().orElseThrow(null);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean loadData(Player player) {
         String filePath = "plugins//Quests//data//" + player.getUniqueId() + ".yml";
@@ -61,9 +62,10 @@ public class FlatfileDataHandler implements ManageData {
             if (file.exists()) {
                 config = YamlConfiguration.loadConfiguration(file);
                 List<Quest> quests = (List<Quest>) config.getList("quests");
-                    for (int i = 0; i < quests.size(); i++) {
-                        quests.get(i).setPlayer(player);
-                    }
+                assert quests != null;
+                for (Quest quest : quests) {
+                    quest.setPlayer(player);
+                }
                 this.quests.addAll(quests);
                 return true;
             }
@@ -91,14 +93,13 @@ public class FlatfileDataHandler implements ManageData {
             File file = new File(filePath);
 
             if (!file.exists()) {
-                file.createNewFile();
+                return file.createNewFile();
             }
 
             List<Quest> quests = getQuests(player);
 
             if (quests.size() == 0) {
-                file.delete();
-                return true;
+                return file.delete();
             }
 
             config = YamlConfiguration.loadConfiguration(file);
@@ -116,9 +117,8 @@ public class FlatfileDataHandler implements ManageData {
     @Override
     public boolean saveData(List<Player> players) {
         try {
-            int listSize = players.size();
-            for (int i = 0; i < listSize; i++) {
-                saveData(players.get(i));
+            for (Player player : players) {
+                saveData(player);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,7 +129,7 @@ public class FlatfileDataHandler implements ManageData {
 
     @Override
     public void removeAllQuests() {
-        quests = null;
+        quests.clear();
     }
 
     @Override

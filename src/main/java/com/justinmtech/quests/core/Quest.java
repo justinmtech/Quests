@@ -75,20 +75,12 @@ public class Quest implements ConfigurationSerializable {
         return completion;
     }
 
-    public void setCompletion(int completion) {
-        this.completion = completion;
-    }
-
     public void incrementProgress() {
         this.progress += 1;
     }
 
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     @Override

@@ -11,7 +11,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 public class BreakListener implements Listener {
     private final Quests plugin;
     private final static String TYPE = "BlockBreak";
-    private String rewardCommand;
+    private final String rewardCommand;
 
     public BreakListener(Quests plugin) {
     this.plugin = plugin;

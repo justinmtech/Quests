@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MySQLDataHandler implements ManageData {
-    private List<Quest> quests;
-    private final Quests plugin;
+    private final List<Quest> quests;
     private final String username;
     private final String password;
     private final String database;
@@ -20,11 +19,10 @@ public class MySQLDataHandler implements ManageData {
 
     public MySQLDataHandler(Quests plugin) {
         this.quests = new ArrayList<>();
-        this.plugin = plugin;
-        username = (String) this.plugin.getConfig().get("mysql.username");
-        password = (String) this.plugin.getConfig().get("mysql.password");
-        database = (String) this.plugin.getConfig().get("mysql.database");
-        table = (String) this.plugin.getConfig().get("mysql.table");
+        username = (String) plugin.getConfig().get("mysql.username");
+        password = (String) plugin.getConfig().get("mysql.password");
+        database = (String) plugin.getConfig().get("mysql.database");
+        table = (String) plugin.getConfig().get("mysql.table");
         initialSetup();
     }
 
@@ -60,8 +58,7 @@ public class MySQLDataHandler implements ManageData {
                 pStat.execute();
                 pStat = connect().prepareStatement(query2);
                 pStat.execute();
-                System.out.println("Quests table successfully");
-
+                pStat.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -71,7 +68,8 @@ public class MySQLDataHandler implements ManageData {
         Connection conn;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-            String url = "jdbc:mysql://localhost/" + database + "?" + "autoReconnect=true&useSSL=false";
+            String url = "jdbc:mysql://localhost/" + database + "?"
+                    + "autoReconnect=true&useSSL=false";
             conn = DriverManager.getConnection(url, username, password);
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,17 +92,10 @@ public class MySQLDataHandler implements ManageData {
         return quests;
     }
 
-    public List<Quest> getQuests() {
-        return quests;
-    }
-
-    public void setQuests(List<Quest> quests) {
-        this.quests = quests;
-    }
-
     @Override
     public Quest getQuest(Player player, String type) {
-        return quests.stream().filter(q -> q.getPlayer().equals(player) && q.getType().equals(type)).findAny().orElseThrow(null);
+        return quests.stream().filter(q -> q.getPlayer().equals(player) &&
+                q.getType().equals(type)).findAny().orElseThrow(null);
     }
 
     private boolean doesEntryExist() {
@@ -156,10 +147,9 @@ public class MySQLDataHandler implements ManageData {
 
     @Override
     public boolean saveData(List<Player> players) {
-        int amountOfPlayers = players.size();
         try {
-            for (int i = 0; i < amountOfPlayers; i++) {
-                saveData(players.get(i));
+            for (Player player : players) {
+                saveData(player);
             }
             return true;
         } catch (Exception e) {
@@ -172,31 +162,30 @@ public class MySQLDataHandler implements ManageData {
     public boolean saveData(Player player) {
         PreparedStatement pStat;
         String uuid = player.getUniqueId().toString();
-        String query = "insert into " + table + " (player_uuid, quest_type, quest_progress, quest_completion) VALUES (?, ?, ?, ?, ?)";
+        String query = "insert into " + table + " (player_uuid, quest_type, quest_progress, quest_completion) VALUES (?, ?, ?, ?)";
         if (doesEntryExist()) {
             query = "update " + table + " SET player_uuid=?, quest_type=?, quest_progress=?, quest_completion=? WHERE player_uuid=? AND quest_type=?";
         }
             List<Quest> playerQuestList = quests.stream().filter(q -> q.getPlayer().equals(player)).collect(Collectors.toList());
 
-            int questListSize = playerQuestList.size();
-            for (int i = 0; i < questListSize; i++) {
-                try {
-                    pStat = connect().prepareStatement(query);
-                    pStat.setString(1, uuid);
-                    pStat.setString(2, playerQuestList.get(i).getType());
-                    pStat.setInt(3, playerQuestList.get(i).getProgress());
-                    pStat.setInt(4, playerQuestList.get(i).getCompletion());
-                    if (query.contains("update")) {
-                        pStat.setString(5, uuid);
-                        pStat.setString(6, playerQuestList.get(i).getType());
-                    }
-                    pStat.executeUpdate();
-                    pStat.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return false;
+        for (Quest quest : playerQuestList) {
+            try {
+                pStat = connect().prepareStatement(query);
+                pStat.setString(1, uuid);
+                pStat.setString(2, quest.getType());
+                pStat.setInt(3, quest.getProgress());
+                pStat.setInt(4, quest.getCompletion());
+                if (query.contains("update")) {
+                    pStat.setString(5, uuid);
+                    pStat.setString(6, quest.getType());
                 }
+                pStat.executeUpdate();
+                pStat.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
             }
+        }
             return true;
     }
 
@@ -226,15 +215,6 @@ public class MySQLDataHandler implements ManageData {
     @Override
     public void removeAllQuests() {
         quests.clear();
-        PreparedStatement pStat;
-        String query = "delete * from " + table;
-        try {
-            pStat = connect().prepareStatement(query);
-            pStat.execute();
-            pStat.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

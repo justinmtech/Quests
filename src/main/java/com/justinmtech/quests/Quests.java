@@ -1,34 +1,24 @@
 package com.justinmtech.quests;
 
-import com.justinmtech.quests.persistence.FlatfileDataHandler;
 import com.justinmtech.quests.core.Quest;
 import com.justinmtech.quests.listeners.*;
+import com.justinmtech.quests.persistence.FlatfileDataHandler;
 import com.justinmtech.quests.persistence.ManageData;
 import com.justinmtech.quests.persistence.MySQLDataHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.File;
-import java.io.Serializable;
 import java.util.List;
-
-//TODO test in-game
-//TODO persist data through reboots
-//TODO find out what the configuration requirements are
 
 public final class Quests extends JavaPlugin {
     private ManageData data;
-
-    public Quests() {
-    }
 
     @Override
     public void onEnable() {
         generateConfigIfEmpty();
         if (setupDataHandling()) {
-            System.out.println("Quests data handling initialized successfully!");
             this.getServer().getPluginManager().registerEvents(new BreakListener(this), this);
             this.getServer().getPluginManager().registerEvents(new KillMobListener(this), this);
             this.getServer().getPluginManager().registerEvents(new PlaceListener(this), this);
@@ -41,9 +31,9 @@ public final class Quests extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             System.out.println("Quests has a configuration error and could not start!");
         }
-
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onDisable() {
         data.saveData((List<Player>) Bukkit.getOnlinePlayers());
@@ -77,7 +67,7 @@ public final class Quests extends JavaPlugin {
 
     private boolean setupDataHandling() {
         try {
-            if (this.getConfig().get("mysql.enabled").equals(true)) {
+            if (this.getConfig().getBoolean("mysql.enabled")) {
                 data = new MySQLDataHandler(this);
             } else {
                 data = new FlatfileDataHandler();
